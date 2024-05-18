@@ -12,6 +12,7 @@
 const weatherForm = document.querySelector(".weatherForm");
 const cityInput = document.querySelector(".cityInput");
 const card = document.querySelector(".card");
+const displayDays = document.querySelector(".displayDays");
 const apiKey = "baa5f2cd8b92122ca79c18d7b7213dc5";
 
 weatherForm.addEventListener("submit", async event => {
@@ -21,6 +22,8 @@ weatherForm.addEventListener("submit", async event => {
         try{
             const weatherData = await getWeatherData(city);
             displayWeatherInfo(weatherData);
+            const forecastData = await get5DayForecast(city);
+            display5DayForecast(forecastData);
         }
         catch(error){
             console.error(error);
@@ -41,6 +44,16 @@ async function getWeatherData(city){
     }
 
     return await response.json();
+}
+
+function get5DayForecast(city){
+    const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
+    return fetch(apiUrl).then(response => {
+        if(!response.ok){
+            throw new Error("Could not fetch weather data");
+        }
+        return response.json();
+    });
 }
 
 function displayWeatherInfo(data){
@@ -72,6 +85,44 @@ function displayWeatherInfo(data){
     card.appendChild(humidityDisplay);
     card.appendChild(descDisplay);
     card.appendChild(weatherEmoji);
+}
+
+function display5DayForecast(data){
+    const forecast = data.list;
+    const forecastDisplay = document.createElement("div");
+    forecastDisplay.classList.add("forecastDisplay");
+
+    for(let i = 0; i < forecast.length; i += 8){
+        const {dt_txt, main: {temp, humidity}, weather: [{description, id}]} = forecast[i];
+        const forecastCard = document.createElement("div");
+        forecastCard.classList.add("forecastCard");
+
+        const dateDisplay = document.createElement("p");
+        const tempDisplay = document.createElement("p");
+        const humidityDisplay = document.createElement("p");
+        const descDisplay = document.createElement("p");
+        const weatherEmoji = document.createElement("p");
+
+        dateDisplay.textContent = dt_txt;
+        tempDisplay.textContent = `${((temp - 273.15) * (9/5) + 32).toFixed(1)}°F`;
+        humidityDisplay.textContent = `Humidity: ${humidity}%`;
+        descDisplay.textContent = description;
+        weatherEmoji.textContent = getWeatherEmoji(id);
+        dateDisplay.classList.add("dateDisplay");
+        tempDisplay.classList.add("tempDisplay");
+        humidityDisplay.classList.add("humidityDisplay");
+        descDisplay.classList.add("descDisplay");
+        weatherEmoji.classList.add("weatherEmoji");
+
+        forecastCard.appendChild(dateDisplay);
+        forecastCard.appendChild(tempDisplay);
+        forecastCard.appendChild(humidityDisplay);
+        forecastCard.appendChild(descDisplay);
+        forecastCard.appendChild(weatherEmoji);
+        forecastDisplay.appendChild(forecastCard);
+    }
+
+    displayDays.appendChild(forecastDisplay);
 }
 
 function getWeatherEmoji(weatherId){
