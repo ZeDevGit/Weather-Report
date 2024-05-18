@@ -1,21 +1,30 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Weather Report</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
+    <!-- Search form for finding the weather by typing in city name -->
     <form class="weatherForm">
         <input type="text" class="cityInput" placeholder="Enter city">
         <button type="submit">Get Weather</button>
     </form>
+    <!-- Displays most recent searched cities -->
+    <div class="recent-searches">
+        <h1>Recent Searches</h1>
+        <div class="searches">
+        </div>
+    </div>
     <div class="card" style="display: none">
     </div>
-    <div class="displayDays"></div>
+    <h1>5 Day Weather Forecast</h1>
+    <!-- Displays 5 day forecast for most recent search -->
+    <div class="displayDays">
+    </div>
     <script src="./js/script.js"></script>
 </body>
 </html>
+
